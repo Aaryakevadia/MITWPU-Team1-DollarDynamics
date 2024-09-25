@@ -1,101 +1,143 @@
-import Image from "next/image";
+"use client";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation'; // Import useRouter
+import axios from 'axios';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [currency1, setCurrency1] = useState('');
+  const [currency2, setCurrency2] = useState('');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
+  const [timeRange, setTimeRange] = useState('');
+  const router = useRouter(); // Initialize router
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const handleCurrency1Change = (e: React.ChangeEvent<HTMLSelectElement>) => setCurrency1(e.target.value);
+  const handleCurrency2Change = (e: React.ChangeEvent<HTMLSelectElement>) => setCurrency2(e.target.value);
+  const handleDateFromChange = (e: React.ChangeEvent<HTMLInputElement>) => setDateFrom(e.target.value);
+  const handleDateToChange = (e: React.ChangeEvent<HTMLInputElement>) => setDateTo(e.target.value);
+  const handleTimeRangeChange = (e: React.ChangeEvent<HTMLSelectElement>) => setTimeRange(e.target.value);
+
+  const handleSeeGraph = async () => {
+    try {
+      const response = await axios.post('/api/graph', {
+        currency1,
+        currency2,
+        dateFrom,
+        dateTo,
+        timeRange,
+      });
+
+      // Handle success response
+      console.log('Graph data:', response.data);
+      // You can navigate to the graph page or display the graph data here
+    } catch (error) {
+      // Handle error response
+      console.error('Error fetching graph data:', error);
+    }
+  };
+
+  // Function to navigate to the Currency Basket page
+  const handleGoToCurrencyBasket = () => {
+    router.push('/currencyBasket'); // Assuming the page is located at /currency-basket
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      {/* Navigation bar */}
+      <nav className="w-full bg-white shadow-md sticky top-0 z-10 p-4">
+        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
+          {/* Currency selectors */}
+          <div className="flex gap-4">
+            <div>
+              <label className="block text-gray-700">Currency 1:</label>
+              <select
+                value={currency1}
+                onChange={handleCurrency1Change}
+                className="px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="">Choose Currency</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-gray-700">Currency 2:</label>
+              <select
+                value={currency2}
+                onChange={handleCurrency2Change}
+                className="px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="">Choose Currency</option>
+                <option value="GBP">GBP</option>
+                <option value="JPY">JPY</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Date selectors */}
+          <div className="flex gap-4">
+            <div>
+              <label className="block text-gray-700">Date From:</label>
+              <input
+                type="date"
+                value={dateFrom}
+                onChange={handleDateFromChange}
+                className="px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-700">Date To:</label>
+              <input
+                type="date"
+                value={dateTo}
+                onChange={handleDateToChange}
+                className="px-3 py-2 border border-gray-300 rounded-md"
+              />
+            </div>
+          </div>
+
+          {/* Time Range selector */}
+          <div className="flex gap-4">
+            <div>
+              <label className="block text-gray-700">Time Range:</label>
+              <select
+                value={timeRange}
+                onChange={handleTimeRangeChange}
+                className="px-3 py-2 border border-gray-300 rounded-md"
+              >
+                <option value="">Select Time Range</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="quarterly">Quarterly</option>
+                <option value="yearly">Yearly</option>
+              </select>
+            </div>
+          </div>
+
+          {/* See Graph button */}
+          <div className="flex justify-end gap-4">
+            <button
+              onClick={handleSeeGraph}
+              className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
+            >
+              See Graph
+            </button>
+
+            {/* Currency Basket button */}
+            <button
+              onClick={handleGoToCurrencyBasket}
+              className="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600"
+            >
+              Currency Basket
+            </button>
+          </div>
         </div>
+      </nav>
+
+      {/* Main content */}
+      <main className="flex-grow p-8 sm:p-16">
+        <h1 className="text-2xl font-semibold text-center mb-6">Currency Exchange Dashboard</h1>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
   );
 }

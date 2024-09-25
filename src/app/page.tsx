@@ -53,7 +53,7 @@ export default function Home() {
 
       const colors = ratios.map((ratio: number, index: number) => {
         if (index >= 10) {
-          const prevTenAvg = ratios.slice(index - 10, index).reduce((acc, val) => acc + val, 0) / 10;
+          const prevTenAvg = ratios.slice(index - 10, index).reduce((acc:any, val:any) => acc + val, 0) / 10;
           const percentageChange = ((ratio - prevTenAvg) / prevTenAvg) * 100;
 
           if (Math.abs(percentageChange) > 2) {
@@ -64,10 +64,10 @@ export default function Home() {
       });
 
       const volatileIndexes = colors
-        .map((color, idx) => (color === 'rgba(255, 99, 132, 0.6)' ? idx : -1))
-        .filter((idx) => idx !== -1);
+        .map((color:any, idx:any) => (color === 'rgba(255, 99, 132, 0.6)' ? idx : -1))
+        .filter((idx:any) => idx !== -1);
 
-      volatileIndexes.forEach((volatileIndex) => {
+      volatileIndexes.forEach((volatileIndex:any) => {
         for (let i = volatileIndex - 7; i <= volatileIndex + 7; i++) {
           if (i >= 0 && i < colors.length) {
             colors[i] = 'rgba(255, 99, 132, 0.6)';

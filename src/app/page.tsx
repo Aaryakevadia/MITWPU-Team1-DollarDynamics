@@ -106,7 +106,7 @@ export default function Home() {
               <select
                 value={currency1}
                 onChange={handleCurrency1Change}
-                className="w-full px-4 py-2 border border-indigo-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border border-indigo-300 text-black rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 <option value="">Select Currency</option>
                 <option value="DZD">Algerian Dinar (DZD)</option>
@@ -167,7 +167,7 @@ export default function Home() {
               <select
                 value={currency2}
                 onChange={handleCurrency2Change}
-                className="w-full px-4 py-2 border border-indigo-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border border-indigo-300 text-black rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 <option value="">Select Currency</option>
                 <option value="DZD">Algerian Dinar (DZD)</option>
@@ -229,7 +229,7 @@ export default function Home() {
                 type="date"
                 value={dateFrom}
                 onChange={handleDateFromChange}
-                className="w-full px-4 py-2 border border-indigo-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border border-indigo-300 text-black rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
 
@@ -239,7 +239,7 @@ export default function Home() {
                 type="date"
                 value={dateTo}
                 onChange={handleDateToChange}
-                className="w-full px-4 py-2 border border-indigo-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border border-indigo-300 text-black rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
 
@@ -248,7 +248,7 @@ export default function Home() {
               <select
                 value={timeRange}
                 onChange={handleTimeRangeChange}
-                className="w-full px-4 py-2 border border-indigo-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 border border-indigo-300 rounded-lg text-black bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 <option value="">Select Time Range</option>
                 <option value="weekly">Weekly</option>

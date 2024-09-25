@@ -45,45 +45,36 @@ export default function Home() {
         dateTo,
         timeRange,
       });
-  
-      console.log('Graph data:', response.data);
-  
+
       const ratios = response.data.data.map((item: CurrencyRatio) => item.ratio);
       const labels = response.data.data.map((item: CurrencyRatio) =>
         new Date(item.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
       );
-  
-      // Detect volatile point and apply color logic
+
       const colors = ratios.map((ratio: number, index: number) => {
         if (index >= 10) {
-          const prevTenAvg = ratios.slice(index - 10, index).reduce((acc:any, val:any) => acc + val, 0) / 10;
+          const prevTenAvg = ratios.slice(index - 10, index).reduce((acc, val) => acc + val, 0) / 10;
           const percentageChange = ((ratio - prevTenAvg) / prevTenAvg) * 100;
-  
+
           if (Math.abs(percentageChange) > 2) {
-            // This is the volatile point
-            const volatileIndex = index;
-  
-            // Return red for this point
             return 'rgba(255, 99, 132, 0.6)';
           }
         }
         return 'rgba(75, 192, 192, 0.6)';
       });
-  
-      // Find the volatile points (where the colors are red)
+
       const volatileIndexes = colors
-        .map((color:any, idx:any) => (color === 'rgba(255, 99, 132, 0.6)' ? idx : -1))
-        .filter((idx:any) => idx !== -1);
-  
-      // Mark 7 points before and after each volatile point
-      volatileIndexes.forEach((volatileIndex:any) => {
+        .map((color, idx) => (color === 'rgba(255, 99, 132, 0.6)' ? idx : -1))
+        .filter((idx) => idx !== -1);
+
+      volatileIndexes.forEach((volatileIndex) => {
         for (let i = volatileIndex - 7; i <= volatileIndex + 7; i++) {
           if (i >= 0 && i < colors.length) {
-            colors[i] = 'rgba(255, 99, 132, 0.6)'; // Marking these as red
+            colors[i] = 'rgba(255, 99, 132, 0.6)';
           }
         }
       });
-  
+
       setChartData({
         labels,
         datasets: [
@@ -98,27 +89,26 @@ export default function Home() {
       console.error('Error fetching graph data:', error);
     }
   };
-  
 
   const handleGoToCurrencyBasket = () => {
     router.push('/currencyBasket');
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 via-purple-100 to-pink-100">
       {/* Navigation bar */}
-      <nav className="w-full bg-white shadow-md sticky top-0 z-10 p-4">
-        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
-          {/* Currency selectors */}
+      <nav className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 shadow-lg sticky top-0 z-10 p-6">
+        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center">
+          <h1 className="text-2xl font-extrabold text-white">Currency Exchange Dashboard</h1>
           <div className="flex gap-4">
-            <div>
-              <label className="block text-gray-700">Currency 1:</label>
+            <div className="w-48">
+              <label className="block text-white text-sm mb-2">Currency 1</label>
               <select
                 value={currency1}
                 onChange={handleCurrency1Change}
-                className="px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full px-4 py-2 border border-indigo-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
-                <option value="">Choose Currency</option>
+                <option value="">Select Currency</option>
                 <option value="DZD">Algerian Dinar (DZD)</option>
                 <option value="AUD">Australian Dollar (AUD)</option>
                 <option value="BWP">Botswana Pula (BWP)</option>
@@ -169,20 +159,20 @@ export default function Home() {
 <option value="NPR">Nepalese Rupee (NPR)</option>
 <option value="PKR">Pakistani Rupee (PKR)</option>
 <option value="LKR">Sri Lankan Rupee (LKR)</option>
-                {/* Add other currency options here */}
               </select>
             </div>
-            <div>
-              <label className="block text-gray-700">Currency 2:</label>
+
+            <div className="w-48">
+              <label className="block text-white text-sm mb-2">Currency 2</label>
               <select
                 value={currency2}
                 onChange={handleCurrency2Change}
-                className="px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full px-4 py-2 border border-indigo-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
-                <option value="">Choose Currency</option>
+                <option value="">Select Currency</option>
                 <option value="DZD">Algerian Dinar (DZD)</option>
                 <option value="AUD">Australian Dollar (AUD)</option>
-<option value="BWP">Botswana Pula (BWP)</option>
+                <option value="BWP">Botswana Pula (BWP)</option>
 <option value="BRL">Brazilian Real (BRL)</option>
 <option value="BND">Brunei Dollar (BND)</option>
 <option value="CAD">Canadian Dollar (CAD)</option>
@@ -230,39 +220,35 @@ export default function Home() {
 <option value="NPR">Nepalese Rupee (NPR)</option>
 <option value="PKR">Pakistani Rupee (PKR)</option>
 <option value="LKR">Sri Lankan Rupee (LKR)</option>
-                {/* Add other currency options here */}
               </select>
             </div>
-          </div>
-          {/* Date selectors */}
-          <div className="flex gap-4">
-            <div>
-              <label className="block text-gray-700">Date From:</label>
+
+            <div className="w-40">
+              <label className="block text-white text-sm mb-2">Date From</label>
               <input
                 type="date"
                 value={dateFrom}
                 onChange={handleDateFromChange}
-                className="px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full px-4 py-2 border border-indigo-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
-            <div>
-              <label className="block text-gray-700">Date To:</label>
+
+            <div className="w-40">
+              <label className="block text-white text-sm mb-2">Date To</label>
               <input
                 type="date"
                 value={dateTo}
                 onChange={handleDateToChange}
-                className="px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full px-4 py-2 border border-indigo-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
-          </div>
-          {/* Time Range selector */}
-          <div className="flex gap-4">
-            <div>
-              <label className="block text-gray-700">Time Range:</label>
+
+            <div className="w-40">
+              <label className="block text-white text-sm mb-2">Time Range</label>
               <select
                 value={timeRange}
                 onChange={handleTimeRangeChange}
-                className="px-3 py-2 border border-gray-300 rounded-md"
+                className="w-full px-4 py-2 border border-indigo-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
               >
                 <option value="">Select Time Range</option>
                 <option value="weekly">Weekly</option>
@@ -272,17 +258,17 @@ export default function Home() {
               </select>
             </div>
           </div>
-          {/* Buttons */}
-          <div className="flex justify-end gap-4">
+
+          <div className="flex gap-4 mt-4">
             <button
               onClick={handleSeeGraph}
-              className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
+              className="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-lg shadow-lg transition"
             >
               See Graph
             </button>
             <button
               onClick={handleGoToCurrencyBasket}
-              className="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600"
+              className="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-lg transition"
             >
               Currency Basket
             </button>
@@ -292,9 +278,8 @@ export default function Home() {
 
       {/* Main content */}
       <main className="flex-grow p-8 sm:p-16">
-        <h1 className="text-2xl font-semibold text-center mb-6">Currency Exchange Dashboard</h1>
-        {chartData && (
-          <div className="mt-8">
+        {chartData ? (
+          <div className="max-w-4xl mx-auto mt-8 p-8 bg-white rounded-lg shadow-md">
             <Bar
               data={chartData}
               options={{
@@ -303,6 +288,9 @@ export default function Home() {
                   title: {
                     display: true,
                     text: `Currency Ratio (${currency1}/${currency2})`,
+                    font: {
+                      size: 20,
+                    },
                   },
                   legend: {
                     position: 'top',
@@ -311,8 +299,14 @@ export default function Home() {
               }}
             />
           </div>
+        ) : (
+          <p className="text-center text-gray-700">Select currencies and dates to view the chart.</p>
         )}
       </main>
+
+      <footer className="bg-gradient-to-r from-pink-500 to-purple-500 py-6 mt-auto">
+        <p className="text-center text-white text-sm">&copy; 2024 Team1 Currency Exchange Dashboard</p>
+      </footer>
     </div>
   );
 }

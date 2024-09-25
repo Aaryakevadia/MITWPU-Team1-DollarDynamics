@@ -3,11 +3,19 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import CurrencyDropdown from "@/components/Currencies/CurrencyDropdown"; // Corrected path
 
 // Define the type for currency objects
 interface Currency {
   currency: string;
   weight: string;
+}
+
+interface BasketDetails {
+  basketName: string;
+  baseCurrency: string;
+  currencies: Currency[];
+  basketValue: number;
 }
 
 export default function CurrencyBasket() {
@@ -16,7 +24,7 @@ export default function CurrencyBasket() {
   const [weight, setWeight] = useState("");
   const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [baseCurrency, setBaseCurrency] = useState("");
-  const [basketValue, setBasketValue] = useState<number | null>(null);
+  const [allBaskets, setAllBaskets] = useState<BasketDetails[]>([]); // Store all baskets
 
   const router = useRouter(); // For redirection
 
@@ -44,31 +52,29 @@ export default function CurrencyBasket() {
         currencies,
         baseCurrency,
       });
-      setBasketValue(response.data.basketValue); // Assuming the API returns the basket value
+
+      // Assuming the API returns the basket value
+      const basketValue = response.data.basketValue;
+
+      // Add the new basket to the allBaskets array
+      setAllBaskets([
+        ...allBaskets,
+        { basketName, baseCurrency, currencies, basketValue },
+      ]);
+
+      // Reset form fields and currencies after submission
+      setBasketName("");
+      setBaseCurrency("");
+      setCurrencies([]);
     } catch (error) {
       console.error("Error calculating basket value", error);
-      setBasketValue(null); // Reset basket value in case of an error
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Topbar/Navbar */}
-      <div className="w-full bg-white fixed top-0 left-0 shadow-md z-50">
-        <div className="max-w-7xl mx-auto flex justify-between p-4">
-          <h1 className="text-3xl font-semibold text-black">Currency Basket</h1>
-          {/* Button to redirect to homepage */}
-          <button
-            onClick={() => router.push("/")} // Redirect to homepage
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-          >
-            Go to Homepage
-          </button>
-        </div>
-      </div>
-
-      {/* Main content */}
-      <div className="mt-20 max-w-3xl mx-auto bg-white p-6 shadow-md rounded-md space-y-4">
+    <div className="min-h-screen flex bg-gray-50 p-6">
+      {/* Left side - Input Form */}
+      <div className="w-1/2 bg-white p-6 shadow-md rounded-md space-y-4">
         <div>
           <label className="block text-black">Basket Name:</label>
           <input
@@ -83,64 +89,10 @@ export default function CurrencyBasket() {
         <div className="flex gap-4">
           <div className="flex-1">
             <label className="block text-black">Currency:</label>
-            <select
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
-            >
-              <option value="">Choose Currency</option>
-              {/* Currency options omitted for brevity */}
-              <option value="DZD">Algerian Dinar (DZD)</option>
-              <option value="AUD">Australian Dollar (AUD)</option>
-              <option value="BWP">Botswana Pula (BWP)</option>
-              <option value="BRL">Brazilian Real (BRL)</option>
-              <option value="BND">Brunei Dollar (BND)</option>
-              <option value="CAD">Canadian Dollar (CAD)</option>
-              <option value="CLP">Chilean Peso (CLP)</option>
-              <option value="CNY">Chinese Yuan (CNY)</option>
-              <option value="COP">Colombian Peso (COP)</option>
-              <option value="CZK">Czech Koruna (CZK)</option>
-              <option value="DKK">Danish Krone (DKK)</option>
-              <option value="EUR">Euro (EUR)</option>
-              <option value="INR">Indian Rupee (INR)</option>
-              <option value="ILS">Israeli New Shekel (ILS)</option>
-              <option value="JPY">Japanese Yen (JPY)</option>
-              <option value="KRW">South Korean Won (KRW)</option>
-              <option value="KWD">Kuwaiti Dinar (KWD)</option>
-              <option value="MYR">Malaysian Ringgit (MYR)</option>
-              <option value="MUR">Mauritian Rupee (MUR)</option>
-              <option value="MXN">Mexican Peso (MXN)</option>
-              <option value="NZD">New Zealand Dollar (NZD)</option>
-              <option value="NOK">Norwegian Krone (NOK)</option>
-              <option value="OMR">Omani Rial (OMR)</option>
-              <option value="PEN">Peruvian Nuevo Sol (PEN)</option>
-              <option value="PHP">Philippine Peso (PHP)</option>
-              <option value="PLN">Polish Zloty (PLN)</option>
-              <option value="QAR">Qatari Rial (QAR)</option>
-              <option value="RUB">Russian Ruble (RUB)</option>
-              <option value="SAR">Saudi Riyal (SAR)</option>
-              <option value="SGD">Singapore Dollar (SGD)</option>
-              <option value="ZAR">South African Rand (ZAR)</option>
-              <option value="SEK">Swedish Krona (SEK)</option>
-              <option value="CHF">Swiss Franc (CHF)</option>
-              <option value="THB">Thai Baht (THB)</option>
-              <option value="TTD">Trinidad and Tobago Dollar (TTD)</option>
-              <option value="GBP">British Pound (GBP)</option>
-              <option value="AED">United Arab Emirates Dirham (AED)</option>
-              <option value="USD">United States Dollar (USD)</option>
-              <option value="UYU">Uruguayan Peso (UYU)</option>
-              <option value="BHD">Bahraini Dinar (BHD)</option>
-              <option value="VEF">Venezuelan Bolívar (VEF)</option>
-              <option value="HUF">Hungarian Forint (HUF)</option>
-              <option value="ISK">Icelandic Króna (ISK)</option>
-              <option value="IDR">Indonesian Rupiah (IDR)</option>
-              <option value="IRR">Iranian Rial (IRR)</option>
-              <option value="KZT">Kazakhstani Tenge (KZT)</option>
-              <option value="LYD">Libyan Dinar (LYD)</option>
-              <option value="NPR">Nepalese Rupee (NPR)</option>
-              <option value="PKR">Pakistani Rupee (PKR)</option>
-              <option value="LKR">Sri Lankan Rupee (LKR)</option>
-            </select>
+            <CurrencyDropdown
+              selectedCurrency={currency}
+              setSelectedCurrency={setCurrency}
+            />
           </div>
           <div className="flex-1">
             <label className="block text-black">Weight (%):</label>
@@ -184,14 +136,10 @@ export default function CurrencyBasket() {
 
         <div className="mt-6">
           <label className="block text-black">Base Currency:</label>
-          <select
-            value={baseCurrency}
-            onChange={(e) => setBaseCurrency(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
-          >
-            <option value="">Choose Base Currency</option>
-            {/* Same currency options can be used here */}
-          </select>
+          <CurrencyDropdown
+            selectedCurrency={baseCurrency}
+            setSelectedCurrency={setBaseCurrency}
+          />
         </div>
 
         <button
@@ -200,14 +148,29 @@ export default function CurrencyBasket() {
         >
           Calculate Basket Value
         </button>
+      </div>
 
-        {basketValue !== null && (
-          <div className="mt-4 p-4 bg-green-100 rounded-md">
-            <h3 className="text-xl font-medium text-green-700">
-              Basket Value: {basketValue}
+      {/* Right side - Display of baskets */}
+      <div className="w-1/2 bg-white p-6 ml-4 shadow-md rounded-md space-y-4">
+        <h2 className="text-2xl font-semibold text-black">Your Currency Baskets:</h2>
+        {allBaskets.map((basket, index) => (
+          <div key={index} className="p-4 bg-blue-100 rounded-md">
+            <h3 className="text-xl font-semibold text-blue-700">
+              Basket Name: {basket.basketName}
+            </h3>
+            <p className="text-black">Base Currency: {basket.baseCurrency}</p>
+            <ul className="space-y-2 mt-2">
+              {basket.currencies.map((currencyObj, currencyIndex) => (
+                <li key={currencyIndex} className="text-black">
+                  {currencyObj.currency} - {currencyObj.weight}%
+                </li>
+              ))}
+            </ul>
+            <h3 className="text-xl font-medium text-green-700 mt-4">
+              Total Basket Value: {basket.basketValue}
             </h3>
           </div>
-        )}
+        ))}
       </div>
     </div>
   );

@@ -3,13 +3,20 @@
 import { useState } from 'react';
 import axios from 'axios';
 
+// Define the type for currency objects
+interface Currency {
+  currency: string;
+  weight: string;
+}
+
 export default function CurrencyBasket() {
   const [basketName, setBasketName] = useState('');
   const [currency, setCurrency] = useState('');
   const [weight, setWeight] = useState('');
-  const [currencies, setCurrencies] = useState([]);
+  // Specify the type for currencies state
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [baseCurrency, setBaseCurrency] = useState('');
-  const [basketValue, setBasketValue] = useState(null);
+  const [basketValue, setBasketValue] = useState<number | null>(null);
 
   // Add the entered currency and weight to the currencies array
   const addCurrency = () => {
@@ -70,10 +77,59 @@ export default function CurrencyBasket() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             >
               <option value="">Choose Currency</option>
-              <option value="USD">USD</option>
-              <option value="EUR">EUR</option>
-              <option value="JPY">JPY</option>
-              {/* Add more currency options as needed */}
+              <option value="DZD">Algerian Dinar (DZD)</option>
+<option value="AUD">Australian Dollar (AUD)</option>
+<option value="BWP">Botswana Pula (BWP)</option>
+<option value="BRL">Brazilian Real (BRL)</option>
+<option value="BND">Brunei Dollar (BND)</option>
+<option value="CAD">Canadian Dollar (CAD)</option>
+<option value="CLP">Chilean Peso (CLP)</option>
+<option value="CNY">Chinese Yuan (CNY)</option>
+<option value="COP">Colombian Peso (COP)</option>
+<option value="CZK">Czech Koruna (CZK)</option>
+<option value="DKK">Danish Krone (DKK)</option>
+<option value="EUR">Euro (EUR)</option>
+<option value="INR">Indian Rupee (INR)</option>
+<option value="ILS">Israeli New Shekel (ILS)</option>
+<option value="JPY">Japanese Yen (JPY)</option>
+<option value="KRW">South Korean Won (KRW)</option>
+<option value="KWD">Kuwaiti Dinar (KWD)</option>
+<option value="MYR">Malaysian Ringgit (MYR)</option>
+<option value="MUR">Mauritian Rupee (MUR)</option>
+<option value="MXN">Mexican Peso (MXN)</option>
+<option value="NZD">New Zealand Dollar (NZD)</option>
+<option value="NOK">Norwegian Krone (NOK)</option>
+<option value="OMR">Omani Rial (OMR)</option>
+<option value="PEN">Peruvian Nuevo Sol (PEN)</option>
+<option value="PHP">Philippine Peso (PHP)</option>
+<option value="PLN">Polish Zloty (PLN)</option>
+<option value="QAR">Qatari Rial (QAR)</option>
+<option value="RUB">Russian Ruble (RUB)</option>
+<option value="SAR">Saudi Riyal (SAR)</option>
+<option value="SGD">Singapore Dollar (SGD)</option>
+<option value="ZAR">South African Rand (ZAR)</option>
+<option value="SEK">Swedish Krona (SEK)</option>
+<option value="CHF">Swiss Franc (CHF)</option>
+<option value="THB">Thai Baht (THB)</option>
+<option value="TTD">Trinidad and Tobago Dollar (TTD)</option>
+<option value="GBP">British Pound (GBP)</option>
+<option value="AED">United Arab Emirates Dirham (AED)</option>
+<option value="USD">United States Dollar (USD)</option>
+<option value="UYU">Uruguayan Peso (UYU)</option>
+<option value="BHD">Bahraini Dinar (BHD)</option>
+<option value="VEF">Venezuelan Bolívar (VEF)</option>
+<option value="HUF">Hungarian Forint (HUF)</option>
+<option value="ISK">Icelandic Króna (ISK)</option>
+<option value="IDR">Indonesian Rupiah (IDR)</option>
+<option value="IRR">Iranian Rial (IRR)</option>
+<option value="KZT">Kazakhstani Tenge (KZT)</option>
+<option value="LYD">Libyan Dinar (LYD)</option>
+<option value="NPR">Nepalese Rupee (NPR)</option>
+<option value="PKR">Pakistani Rupee (PKR)</option>
+<option value="LKR">Sri Lankan Rupee (LKR)</option>
+
+
+              
             </select>
           </div>
           <div className="flex-1">
@@ -123,8 +179,57 @@ export default function CurrencyBasket() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md"
           >
             <option value="">Choose Base Currency</option>
-            <option value="INR">INR</option>
-            <option value="USD">USD</option>
+            <option value="DZD">Algerian Dinar (DZD)</option>
+<option value="AUD">Australian Dollar (AUD)</option>
+<option value="BWP">Botswana Pula (BWP)</option>
+<option value="BRL">Brazilian Real (BRL)</option>
+<option value="BND">Brunei Dollar (BND)</option>
+<option value="CAD">Canadian Dollar (CAD)</option>
+<option value="CLP">Chilean Peso (CLP)</option>
+<option value="CNY">Chinese Yuan (CNY)</option>
+<option value="COP">Colombian Peso (COP)</option>
+<option value="CZK">Czech Koruna (CZK)</option>
+<option value="DKK">Danish Krone (DKK)</option>
+<option value="EUR">Euro (EUR)</option>
+<option value="INR">Indian Rupee (INR)</option>
+<option value="ILS">Israeli New Shekel (ILS)</option>
+<option value="JPY">Japanese Yen (JPY)</option>
+<option value="KRW">South Korean Won (KRW)</option>
+<option value="KWD">Kuwaiti Dinar (KWD)</option>
+<option value="MYR">Malaysian Ringgit (MYR)</option>
+<option value="MUR">Mauritian Rupee (MUR)</option>
+<option value="MXN">Mexican Peso (MXN)</option>
+<option value="NZD">New Zealand Dollar (NZD)</option>
+<option value="NOK">Norwegian Krone (NOK)</option>
+<option value="OMR">Omani Rial (OMR)</option>
+<option value="PEN">Peruvian Nuevo Sol (PEN)</option>
+<option value="PHP">Philippine Peso (PHP)</option>
+<option value="PLN">Polish Zloty (PLN)</option>
+<option value="QAR">Qatari Rial (QAR)</option>
+<option value="RUB">Russian Ruble (RUB)</option>
+<option value="SAR">Saudi Riyal (SAR)</option>
+<option value="SGD">Singapore Dollar (SGD)</option>
+<option value="ZAR">South African Rand (ZAR)</option>
+<option value="SEK">Swedish Krona (SEK)</option>
+<option value="CHF">Swiss Franc (CHF)</option>
+<option value="THB">Thai Baht (THB)</option>
+<option value="TTD">Trinidad and Tobago Dollar (TTD)</option>
+<option value="GBP">British Pound (GBP)</option>
+<option value="AED">United Arab Emirates Dirham (AED)</option>
+<option value="USD">United States Dollar (USD)</option>
+<option value="UYU">Uruguayan Peso (UYU)</option>
+<option value="BHD">Bahraini Dinar (BHD)</option>
+<option value="VEF">Venezuelan Bolívar (VEF)</option>
+<option value="HUF">Hungarian Forint (HUF)</option>
+<option value="ISK">Icelandic Króna (ISK)</option>
+<option value="IDR">Indonesian Rupiah (IDR)</option>
+<option value="IRR">Iranian Rial (IRR)</option>
+<option value="KZT">Kazakhstani Tenge (KZT)</option>
+<option value="LYD">Libyan Dinar (LYD)</option>
+<option value="NPR">Nepalese Rupee (NPR)</option>
+<option value="PKR">Pakistani Rupee (PKR)</option>
+<option value="LKR">Sri Lankan Rupee (LKR)</option>
+
             {/* Add more base currency options as needed */}
           </select>
         </div>

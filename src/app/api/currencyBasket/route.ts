@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { connect } from "@/dbConnect/dbConnect"; // Import your db connection function
 
-// Named export for POST request
+interface Currency {
+  currency: string;
+  weight: string;
+}
+
 export async function POST(request: NextRequest) {
-  const connection = await connect(); // Connect to the MongoDB database and get the connection object
-
   try {
-    // Get user input from request body
-    const { basketName, currencies, baseCurrency } = await request.json();
+    const {
+      basketName,
+      currencies,
+      baseCurrency,
+    }: { basketName: string; currencies: Currency[]; baseCurrency: string } =
+      await request.json();
 
     // Validate input
     if (
@@ -23,37 +28,52 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Access the database collection
-    const collection = connection.collection("currency_data"); // Replace with your collection name
+    // Calculate total weight
+    const totalWeight = currencies.reduce(
+      (sum: number, { weight }: Currency) => sum + parseFloat(weight),
+      0
+    );
 
-    // Find the most recent document for the given base currency
-    const latestDocument = await collection
-      .find({})
-      .sort({ Date: -1 })
-      .limit(1)
-      .toArray();
-
-    if (latestDocument.length === 0) {
+    // Check if total weight exceeds 100%
+    if (totalWeight > 100) {
       return NextResponse.json({
         success: false,
-        message: "No currency data found.",
+        message: "Total weight of currencies exceeds 100%.",
       });
     }
 
-    const latestData = latestDocument[0]; // Get the latest document
+    // Fetch the latest exchange rates from the API only if total weight is valid
+    const exchangeRatesResponse = await fetch(
+      `https://api.apilayer.com/exchangerates_data/latest?base=${baseCurrency}`,
+      {
+        method: "GET",
+        headers: {
+          apikey: "wwRLgfUH1bjiWUeaZWfYNuZpYUmQTqaV",
+        },
+      }
+    );
 
-    // Calculate the total value of the basket
+    if (!exchangeRatesResponse.ok) {
+      throw new Error("Failed to fetch exchange rates");
+    }
+
+    const exchangeRatesData = await exchangeRatesResponse.json();
+    const latestData = exchangeRatesData.rates; // Get the rates from the response
+
     const basketValue = calculateBasketValue(
       currencies,
       latestData,
       baseCurrency
     );
 
-    // Return the calculated basket value
+    const createdBasket = await createBasketCard(basketName, basketValue);
+
+    // Return the created basket information
     return NextResponse.json({
       success: true,
       basketName,
       basketValue,
+      createdBasket,
     });
   } catch (error) {
     console.error("Error calculating basket value:", error);
@@ -66,30 +86,33 @@ export async function POST(request: NextRequest) {
 
 // Function to calculate the total value of the basket based on the weights and latest exchange rates
 function calculateBasketValue(
-  currencies: { currency: string; weight: string }[],
-  latestData: any,
+  currencies: Currency[],
+  latestData: Record<string, number>,
   baseCurrency: string
 ) {
   let totalValue = 0;
 
   // Add the value of the base currency (100% of its value)
-  const baseCurrencyValue = latestData[baseCurrency]; // Get the exchange rate for the base currency
+  const baseCurrencyValue = latestData[baseCurrency];
 
   if (baseCurrencyValue !== undefined) {
-    totalValue += 1; // Base currency adds its full value (1 for 100%)
+    totalValue += 1;
   }
 
-  currencies.forEach(({ currency, weight }) => {
-    const currencyValue = baseCurrencyValue / latestData[currency]; // Exchange rate for the currency against the base currency
-    const currencyWeight = parseFloat(weight) / 100; // Convert percentage to decimal
+  currencies.forEach(({ currency, weight }: Currency) => {
+    const currencyValue = latestData[currency];
+    const currencyWeight = parseFloat(weight) / 100;
 
-    // Check if the currency exists in the latest data
     if (currencyValue !== undefined) {
-      // Calculate the value from the currency based on its weight
-      const valueFromCurrency = currencyWeight * currencyValue; // Value from this currency
-      totalValue += valueFromCurrency; // Add to total value
+      const valueFromCurrency =
+        currencyWeight * (baseCurrencyValue / currencyValue);
+      totalValue += valueFromCurrency;
     }
   });
 
   return totalValue;
+}
+
+async function createBasketCard(basketName: string, basketValue: number) {
+  return { basketName, basketValue };
 }

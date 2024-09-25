@@ -1,14 +1,12 @@
 "use client";
 import { useState } from 'react';
-import { useRouter } from 'next/navigation'; // Import useRouter
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { Bar } from 'react-chartjs-2'; // Import Bar chart from react-chartjs-2
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title } from 'chart.js'; // Import required components from Chart.js
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
 
-// Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title);
 
-// Define interfaces for chart data
 interface CurrencyRatio {
   date: string;
   ratio: number;
@@ -29,8 +27,8 @@ export default function Home() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [timeRange, setTimeRange] = useState('');
-  const [chartData, setChartData] = useState<ChartData | null>(null); // Set initial state to null
-  const router = useRouter(); // Initialize router
+  const [chartData, setChartData] = useState<ChartData | null>(null);
+  const router = useRouter();
 
   const handleCurrency1Change = (e: React.ChangeEvent<HTMLSelectElement>) => setCurrency1(e.target.value);
   const handleCurrency2Change = (e: React.ChangeEvent<HTMLSelectElement>) => setCurrency2(e.target.value);
@@ -47,36 +45,63 @@ export default function Home() {
         dateTo,
         timeRange,
       });
-
-      // Handle success response
+  
       console.log('Graph data:', response.data);
-
-      // Prepare data for the chart
-      const labels = response.data.data.map((item: CurrencyRatio) => 
+  
+      const ratios = response.data.data.map((item: CurrencyRatio) => item.ratio);
+      const labels = response.data.data.map((item: CurrencyRatio) =>
         new Date(item.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
       );
-      const ratios = response.data.data.map((item: CurrencyRatio) => item.ratio);
-
+  
+      // Detect volatile point and apply color logic
+      const colors = ratios.map((ratio: number, index: number) => {
+        if (index >= 10) {
+          const prevTenAvg = ratios.slice(index - 10, index).reduce((acc, val) => acc + val, 0) / 10;
+          const percentageChange = ((ratio - prevTenAvg) / prevTenAvg) * 100;
+  
+          if (Math.abs(percentageChange) > 2) {
+            // This is the volatile point
+            const volatileIndex = index;
+  
+            // Return red for this point
+            return 'rgba(255, 99, 132, 0.6)';
+          }
+        }
+        return 'rgba(75, 192, 192, 0.6)';
+      });
+  
+      // Find the volatile points (where the colors are red)
+      const volatileIndexes = colors
+        .map((color, idx) => (color === 'rgba(255, 99, 132, 0.6)' ? idx : -1))
+        .filter((idx) => idx !== -1);
+  
+      // Mark 7 points before and after each volatile point
+      volatileIndexes.forEach((volatileIndex) => {
+        for (let i = volatileIndex - 7; i <= volatileIndex + 7; i++) {
+          if (i >= 0 && i < colors.length) {
+            colors[i] = 'rgba(255, 99, 132, 0.6)'; // Marking these as red
+          }
+        }
+      });
+  
       setChartData({
-        labels, // X-axis labels
+        labels,
         datasets: [
           {
             label: `Currency Ratio (${currency1}/${currency2})`,
-            data: ratios, // Y-axis data
-            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+            data: ratios,
+            backgroundColor: colors,
           },
         ],
       });
-
     } catch (error) {
-      // Handle error response
       console.error('Error fetching graph data:', error);
     }
   };
+  
 
-  // Function to navigate to the Currency Basket page
   const handleGoToCurrencyBasket = () => {
-    router.push('/currencyBasket'); // Assuming the page is located at /currency-basket
+    router.push('/currencyBasket');
   };
 
   return (
@@ -95,8 +120,8 @@ export default function Home() {
               >
                 <option value="">Choose Currency</option>
                 <option value="DZD">Algerian Dinar (DZD)</option>
-<option value="AUD">Australian Dollar (AUD)</option>
-<option value="BWP">Botswana Pula (BWP)</option>
+                <option value="AUD">Australian Dollar (AUD)</option>
+                <option value="BWP">Botswana Pula (BWP)</option>
 <option value="BRL">Brazilian Real (BRL)</option>
 <option value="BND">Brunei Dollar (BND)</option>
 <option value="CAD">Canadian Dollar (CAD)</option>
@@ -144,8 +169,7 @@ export default function Home() {
 <option value="NPR">Nepalese Rupee (NPR)</option>
 <option value="PKR">Pakistani Rupee (PKR)</option>
 <option value="LKR">Sri Lankan Rupee (LKR)</option>
-
-                    
+                {/* Add other currency options here */}
               </select>
             </div>
             <div>
@@ -157,7 +181,7 @@ export default function Home() {
               >
                 <option value="">Choose Currency</option>
                 <option value="DZD">Algerian Dinar (DZD)</option>
-<option value="AUD">Australian Dollar (AUD)</option>
+                <option value="AUD">Australian Dollar (AUD)</option>
 <option value="BWP">Botswana Pula (BWP)</option>
 <option value="BRL">Brazilian Real (BRL)</option>
 <option value="BND">Brunei Dollar (BND)</option>
@@ -206,14 +230,10 @@ export default function Home() {
 <option value="NPR">Nepalese Rupee (NPR)</option>
 <option value="PKR">Pakistani Rupee (PKR)</option>
 <option value="LKR">Sri Lankan Rupee (LKR)</option>
-
-
-
-
+                {/* Add other currency options here */}
               </select>
             </div>
           </div>
-
           {/* Date selectors */}
           <div className="flex gap-4">
             <div>
@@ -235,7 +255,6 @@ export default function Home() {
               />
             </div>
           </div>
-
           {/* Time Range selector */}
           <div className="flex gap-4">
             <div>
@@ -253,8 +272,7 @@ export default function Home() {
               </select>
             </div>
           </div>
-
-          {/* See Graph button */}
+          {/* Buttons */}
           <div className="flex justify-end gap-4">
             <button
               onClick={handleSeeGraph}
@@ -262,8 +280,6 @@ export default function Home() {
             >
               See Graph
             </button>
-
-            {/* Currency Basket button */}
             <button
               onClick={handleGoToCurrencyBasket}
               className="bg-green-500 text-white px-6 py-2 rounded-md hover:bg-green-600"
@@ -277,12 +293,10 @@ export default function Home() {
       {/* Main content */}
       <main className="flex-grow p-8 sm:p-16">
         <h1 className="text-2xl font-semibold text-center mb-6">Currency Exchange Dashboard</h1>
-
-        {/* Render the chart if data is available */}
         {chartData && (
           <div className="mt-8">
             <Bar
-              data={chartData} // Pass the chart data
+              data={chartData}
               options={{
                 responsive: true,
                 plugins: {

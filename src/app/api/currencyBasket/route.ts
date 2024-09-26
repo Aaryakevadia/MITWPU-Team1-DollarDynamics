@@ -95,9 +95,7 @@ function calculateBasketValue(
   // Add the value of the base currency (100% of its value)
   const baseCurrencyValue = latestData[baseCurrency];
 
-  if (baseCurrencyValue !== undefined) {
-    totalValue += 1;
-  }
+  
 
   currencies.forEach(({ currency, weight }: Currency) => {
     const currencyValue = latestData[currency];

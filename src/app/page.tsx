@@ -1,10 +1,10 @@
 "use client";
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import axios from 'axios';
-import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title } from 'chart.js';
-import CurrencyDropdown from "@/components/Currencies/CurrencyDropdown"; // Corrected path
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title } from "chart.js";
+import CurrencyDropdown from "@/components/Currencies/CurrencyDropdown"; // Correct path
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title);
 
@@ -23,59 +23,75 @@ interface ChartData {
 }
 
 export default function Home() {
-  const [currency1, setCurrency1] = useState('');
-  const [currency2, setCurrency2] = useState('');
-  const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateTo] = useState('');
-  const [timeRange, setTimeRange] = useState('');
+  const [currency1, setCurrency1] = useState("");
+  const [currency2, setCurrency2] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [timeRange, setTimeRange] = useState("");
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const router = useRouter();
 
-  const handleCurrency1Change = (e: React.ChangeEvent<HTMLSelectElement>) => setCurrency1(e.target.value);
-  const handleCurrency2Change = (e: React.ChangeEvent<HTMLSelectElement>) => setCurrency2(e.target.value);
-  const handleDateFromChange = (e: React.ChangeEvent<HTMLInputElement>) => setDateFrom(e.target.value);
+  const handleDateFromChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setDateFrom(e.target.value);
   const handleDateToChange = (e: React.ChangeEvent<HTMLInputElement>) => setDateTo(e.target.value);
-  const handleTimeRangeChange = (e: React.ChangeEvent<HTMLSelectElement>) => setTimeRange(e.target.value);
+  const handleTimeRangeChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
+    setTimeRange(e.target.value);
 
   const handleSeeGraph = async () => {
     try {
-      const response = await axios.post('/api/graph', {
+      const response = await axios.post("/api/graph", {
         currency1,
         currency2,
         dateFrom,
         dateTo,
         timeRange,
       });
-
+  
       const ratios = response.data.data.map((item: CurrencyRatio) => item.ratio);
-      const labels = response.data.data.map((item: CurrencyRatio) =>
-        new Date(item.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-      );
-
+      const labels = response.data.data.map((item: CurrencyRatio) => item.date);
+  
+      // Set volatile parameters based on the selected time range
+      let volatileAverageRange = 20; // Default for weekly
+      let volatileColorRange = 1; // Default for weekly
+  
+      if (timeRange === "monthly") {
+        volatileAverageRange = 1;
+        volatileColorRange = 1;
+      } else if (timeRange === "quarterly") {
+        volatileAverageRange = 1;
+        volatileColorRange = 0;
+      } else if (timeRange === "yearly") {
+        volatileAverageRange = 1;
+        volatileColorRange = 0;
+      }
+  
       const colors = ratios.map((ratio: number, index: number) => {
-        if (index >= 10) {
-          const prevTenAvg = ratios.slice(index - 10, index).reduce((acc:any, val:any) => acc + val, 0) / 10;
-          const percentageChange = ((ratio - prevTenAvg) / prevTenAvg) * 100;
-
+        if (index >= volatileAverageRange) {
+          const prevAvg = ratios
+            .slice(index - volatileAverageRange, index)
+            .reduce((acc: number, val: number) => acc + val, 0) / volatileAverageRange;
+          const percentageChange = ((ratio - prevAvg) / prevAvg) * 100;
+  
           if (Math.abs(percentageChange) > 2) {
-            return 'rgba(255, 99, 132, 0.6)';
+            return "rgba(255, 99, 132, 0.6)"; // Red color for volatile
           }
         }
-        return 'rgba(75, 192, 192, 0.6)';
+        return "rgba(75, 192, 192, 0.6)"; // Default color
       });
-
+  
       const volatileIndexes = colors
-        .map((color:any, idx:any) => (color === 'rgba(255, 99, 132, 0.6)' ? idx : -1))
-        .filter((idx:any) => idx !== -1);
-
-      volatileIndexes.forEach((volatileIndex:any) => {
-        for (let i = volatileIndex - 7; i <= volatileIndex + 7; i++) {
+        .map((color: string, idx: number) => (color === "rgba(255, 99, 132, 0.6)" ? idx : -1))
+        .filter((idx: number) => idx !== -1);
+  
+      // Expand the volatile coloring range based on the volatileColorRange value
+      volatileIndexes.forEach((volatileIndex: number) => {
+        for (let i = volatileIndex - volatileColorRange; i <= volatileIndex + volatileColorRange; i++) {
           if (i >= 0 && i < colors.length) {
-            colors[i] = 'rgba(255, 99, 132, 0.6)';
+            colors[i] = "rgba(255, 99, 132, 0.6)"; // Mark surrounding bars as volatile
           }
         }
       });
-
+  
       setChartData({
         labels,
         datasets: [
@@ -87,12 +103,13 @@ export default function Home() {
         ],
       });
     } catch (error) {
-      console.error('Error fetching graph data:', error);
+      console.error("Error fetching graph data:", error);
     }
   };
+  
 
   const handleGoToCurrencyBasket = () => {
-    router.push('/currencyBasket');
+    router.push("/currencyBasket");
   };
 
   return (
@@ -104,22 +121,12 @@ export default function Home() {
           <div className="flex gap-4">
             <div className="w-48">
               <label className="block text-white text-sm mb-2">Currency 1</label>
-             
-                <CurrencyDropdown
-              selectedCurrency={currency1}
-              setSelectedCurrency={setCurrency1}
-            />
-
+              <CurrencyDropdown selectedCurrency={currency1} setSelectedCurrency={setCurrency1} />
             </div>
 
             <div className="w-48">
               <label className="block text-white text-sm mb-2">Currency 2</label>
-              
-                <CurrencyDropdown
-              selectedCurrency={currency2}
-              setSelectedCurrency={setCurrency2}
-            />
-                
+              <CurrencyDropdown selectedCurrency={currency2} setSelectedCurrency={setCurrency2} />
             </div>
 
             <div className="w-40">
@@ -192,19 +199,37 @@ export default function Home() {
                     },
                   },
                   legend: {
-                    position: 'top',
+                    position: "top",
+                  },
+                },
+                scales: {
+                  x: {
+                    title: {
+                      display: true,
+                      text: timeRange.charAt(0).toUpperCase() + timeRange.slice(1),
+                    },
+                  },
+                  y: {
+                    title: {
+                      display: true,
+                      text: "Ratio",
+                    },
                   },
                 },
               }}
             />
           </div>
         ) : (
-          <p className="text-center text-gray-700">Select currencies and dates to view the chart.</p>
+          <p className="text-center text-gray-700">
+            Select currencies and dates to view the chart.
+          </p>
         )}
       </main>
 
       <footer className="bg-gradient-to-r from-pink-500 to-purple-500 py-6 mt-auto">
-        <p className="text-center text-white text-sm">&copy; 2024 Team1 Currency Exchange Dashboard</p>
+        <p className="text-center text-white text-sm">
+          &copy; 2024 Team1 Currency Exchange Dashboard
+        </p>
       </footer>
     </div>
   );

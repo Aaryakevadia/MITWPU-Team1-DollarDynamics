@@ -11,7 +11,6 @@ const CurrencyDropdown: React.FC<CurrencyDropdownProps> = ({
   setSelectedCurrency,
 }) => {
   const currencies = [
-    
     { code: "DZD", name: "Algerian Dinar (DZD)" },
     { code: "AUD", name: "Australian Dollar (AUD)" },
     { code: "BWP", name: "Botswana Pula (BWP)" },
@@ -68,7 +67,7 @@ const CurrencyDropdown: React.FC<CurrencyDropdownProps> = ({
     <select
       value={selectedCurrency}
       onChange={(e) => setSelectedCurrency(e.target.value)}
-      className="w-full px-3 py-2 border border-gray-300 rounded-md"
+      className="w-full px-3 py-2 border-2 border-gray-400 rounded-md bg-violet-200 text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
     >
       <option value="">Choose Currency</option>
       {currencies.map((currency) => (

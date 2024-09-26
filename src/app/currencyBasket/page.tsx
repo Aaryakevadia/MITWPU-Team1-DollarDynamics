@@ -72,23 +72,23 @@ export default function CurrencyBasket() {
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50 p-6">
+    <div className="min-h-screen flex bg-gradient-to-r from-blue-600 to-violet-600 p-6">
       {/* Left side - Input Form */}
-      <div className="w-1/2 bg-white p-6 shadow-md rounded-md space-y-4">
+      <div className="w-1/2 bg-violet-200 p-6 shadow-md rounded-md space-y-4">
         <div>
           <label className="block text-black">Basket Name:</label>
           <input
             type="text"
             value={basketName}
             onChange={(e) => setBasketName(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            className="w-full px-3 py-2 border-2 border-gray-400 rounded-md text-black"
             placeholder="Enter basket name"
           />
         </div>
 
         <div className="flex gap-4">
           <div className="flex-1">
-            <label className="block text-black">Currency:</label>
+            <label className="block text-black border-black">Currency:</label>
             <CurrencyDropdown
               selectedCurrency={currency}
               setSelectedCurrency={setCurrency}
@@ -100,12 +100,12 @@ export default function CurrencyBasket() {
               type="number"
               value={weight}
               onChange={(e) => setWeight(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full px-3 py-2 border-2 border-gray-400 rounded-md text-black"
               placeholder="Enter weight"
             />
           </div>
           <button
-            className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mt-6"
+            className="bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 text-white px-4 py-2 rounded-md hover:bg-blue-600 mt-6"
             onClick={addCurrency}
           >
             Add Currency
@@ -143,7 +143,7 @@ export default function CurrencyBasket() {
         </div>
 
         <button
-          className="w-full bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 mt-6"
+          className="w-full bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 text-white px-4 py-2 rounded-md hover:bg-blue-900 mt-6"
           onClick={handleSubmit}
         >
           Calculate Basket Value
@@ -151,7 +151,7 @@ export default function CurrencyBasket() {
       </div>
 
       {/* Right side - Display of baskets */}
-      <div className="w-1/2 bg-white p-6 ml-4 shadow-md rounded-md space-y-4">
+      <div className="w-1/2 bg-violet-200 p-6 ml-4 shadow-md rounded-md space-y-4">
         <h2 className="text-2xl font-semibold text-black">Your Currency Baskets:</h2>
         {allBaskets.map((basket, index) => (
           <div key={index} className="p-4 bg-blue-100 rounded-md">

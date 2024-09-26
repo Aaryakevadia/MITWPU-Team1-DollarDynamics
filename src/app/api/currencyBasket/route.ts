@@ -28,13 +28,11 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Calculate total weight
     const totalWeight = currencies.reduce(
       (sum: number, { weight }: Currency) => sum + parseFloat(weight),
       0
     );
 
-    // Check if total weight exceeds 100%
     if (totalWeight > 100) {
       return NextResponse.json({
         success: false,
@@ -58,7 +56,7 @@ export async function POST(request: NextRequest) {
     }
 
     const exchangeRatesData = await exchangeRatesResponse.json();
-    const latestData = exchangeRatesData.rates; // Get the rates from the response
+    const latestData = exchangeRatesData.rates;
 
     const basketValue = calculateBasketValue(
       currencies,
@@ -68,7 +66,6 @@ export async function POST(request: NextRequest) {
 
     const createdBasket = await createBasketCard(basketName, basketValue);
 
-    // Return the created basket information
     return NextResponse.json({
       success: true,
       basketName,
@@ -84,7 +81,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Function to calculate the total value of the basket based on the weights and latest exchange rates
 function calculateBasketValue(
   currencies: Currency[],
   latestData: Record<string, number>,
@@ -92,10 +88,7 @@ function calculateBasketValue(
 ) {
   let totalValue = 0;
 
-  // Add the value of the base currency (100% of its value)
   const baseCurrencyValue = latestData[baseCurrency];
-
-  
 
   currencies.forEach(({ currency, weight }: Currency) => {
     const currencyValue = latestData[currency];

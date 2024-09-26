@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import CurrencyDropdown from "@/components/Currencies/CurrencyDropdown"; // Corrected path
+import CurrencyDropdown from "@/components/Currencies/CurrencyDropdown"; 
 
-// Define the type for currency objects
+
 interface Currency {
   currency: string;
   weight: string;
@@ -24,35 +24,35 @@ export default function CurrencyBasket() {
   const [weight, setWeight] = useState("");
   const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [baseCurrency, setBaseCurrency] = useState("");
-  const [allBaskets, setAllBaskets] = useState<BasketDetails[]>([]); // Store all baskets
+  const [allBaskets, setAllBaskets] = useState<BasketDetails[]>([]); 
   const [errorMessage, setErrorMessage] = useState<string>("");
 
-  const router = useRouter(); // For redirection
+  const router = useRouter(); 
 
-  // Add the entered currency and weight to the currencies array
+  
   const addCurrency = () => {
     if (!currency || !weight) {
       setErrorMessage("Please fill both currency and weight fields.");
       return;
     }
-    setErrorMessage(""); // Clear error message
+    setErrorMessage(""); 
     setCurrencies([...currencies, { currency, weight }]);
     setCurrency("");
     setWeight("");
   };
 
-  // Remove a currency and its weight from the array
+
   const removeCurrency = (index: number) => {
     setCurrencies(currencies.filter((_, i) => i !== index));
   };
 
-  // Handle form submission to calculate the basket value
+ 
   const handleSubmit = async () => {
     if (!basketName || currencies.length === 0 || !baseCurrency) {
       setErrorMessage("Please fill all required fields: Basket Name, Added Currencies, and Base Currency.");
       return;
     }
-    setErrorMessage(""); // Clear error message
+    setErrorMessage(""); 
 
     try {
       const response = await axios.post("/api/currencyBasket", {
@@ -61,16 +61,16 @@ export default function CurrencyBasket() {
         baseCurrency,
       });
 
-      // Assuming the API returns the basket value
+      
       const basketValue = response.data.basketValue;
 
-      // Add the new basket to the allBaskets array
+      
       setAllBaskets((prevBaskets) => [
         ...prevBaskets,
         { basketName, baseCurrency, currencies, basketValue },
       ]);
 
-      // Reset form fields and currencies after submission
+      
       setBasketName("");
       setBaseCurrency("");
       setCurrencies([]);
@@ -93,12 +93,12 @@ export default function CurrencyBasket() {
       </nav>
 
       <div className="flex justify-between space-x-4 flex-grow">
-        {/* Left side - Input Form */}
+       
         <div className="w-1/2 bg-white bg-opacity-90 p-8 shadow-lg rounded-md space-y-6">
           <h2 className="text-2xl font-semibold text-center text-gray-800">Create Basket</h2>
-          {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>} {/* Error Message */}
+          {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>} 
           <div className="flex flex-col items-center">
-            {/* Basket Name Input */}
+           
             <div className="w-full mb-4">
               <label className="block text-gray-700 mb-2">
                 Basket Name:<span className="text-red-500">*</span>
@@ -112,7 +112,7 @@ export default function CurrencyBasket() {
               />
             </div>
 
-            {/* Currency and Weight Input */}
+            
             <div className="flex gap-4 mb-4 w-full">
               <div className="flex-1">
                 <label className="block text-gray-700 mb-2">
@@ -137,7 +137,7 @@ export default function CurrencyBasket() {
               </div>
             </div>
 
-            {/* Add Currency Button */}
+            
             <button
               className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l focus:ring-4 focus:outline-none focus:ring-purple-300 text-white px-4 py-2 rounded-md transition duration-200 mb-4"
               onClick={addCurrency}
@@ -145,7 +145,7 @@ export default function CurrencyBasket() {
               Add Currency
             </button>
 
-            {/* Display Added Currencies */}
+            
             <div className="mt-4 w-full">
               <h2 className="text-lg font-medium text-gray-800">Added Currencies:</h2>
               <ul className="space-y-2">
@@ -168,7 +168,7 @@ export default function CurrencyBasket() {
               </ul>
             </div>
 
-            {/* Base Currency Selection */}
+           
             <div className="mt-6 w-full">
               <label className="block text-gray-700 mb-2">
                 Base Currency:<span className="text-red-500">*</span>
@@ -179,7 +179,7 @@ export default function CurrencyBasket() {
               />
             </div>
 
-            {/* Calculate Basket Value Button */}
+            
             <button
               className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 text-white px-4 py-2 rounded-md mt-4"
               onClick={handleSubmit}
@@ -189,7 +189,7 @@ export default function CurrencyBasket() {
           </div>
         </div>
 
-        {/* Right side - Display of baskets */}
+        
         <div className="w-1/2 bg-white bg-opacity-90 p-8 shadow-lg rounded-md space-y-6">
           <h2 className="text-2xl font-semibold text-center text-gray-800">Your Currency Baskets:</h2>
           {allBaskets.length === 0 ? (

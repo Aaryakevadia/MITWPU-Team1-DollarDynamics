@@ -1,10 +1,10 @@
-"use client"; // This will mark the file as a Client Componen
+"use client"; 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title } from "chart.js";
-import CurrencyDropdown from "@/components/Currencies/CurrencyDropdown"; // Correct path
+import CurrencyDropdown from "@/components/Currencies/CurrencyDropdown"; 
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title);
 
@@ -50,9 +50,9 @@ export default function Home() {
       const ratios = response.data.data.map((item: CurrencyRatio) => item.ratio);
       const labels = response.data.data.map((item: CurrencyRatio) => item.date);
 
-      // Set volatile parameters based on the selected time range
+      
       let volatileAverageRange = 20; // Default for weekly
-      let volatileColorRange = 1; // Default for weekly
+      let volatileColorRange = 1; 
 
       if (timeRange === "monthly") {
         volatileAverageRange = 1;
@@ -83,11 +83,11 @@ export default function Home() {
         .map((color: string, idx: number) => (color === "rgba(255, 99, 132, 0.6)" ? idx : -1))
         .filter((idx: number) => idx !== -1);
 
-      // Expand the volatile coloring range based on the volatileColorRange value
+      
       volatileIndexes.forEach((volatileIndex: number) => {
         for (let i = volatileIndex - volatileColorRange; i <= volatileIndex + volatileColorRange; i++) {
           if (i >= 0 && i < colors.length) {
-            colors[i] = "rgba(255, 99, 132, 0.6)"; // Mark surrounding bars as volatile
+            colors[i] = "rgba(255, 99, 132, 0.6)"; 
           }
         }
       });
@@ -114,13 +114,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 via-purple-100 to-pink-100">
-      {/* Navigation bar */}
+      
       <nav className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 shadow-lg sticky top-0 z-10 p-6">
         <div className="max-w-7xl mx-auto">
-          {/* Block for the title on its own line */}
+          
           <h1 className="text-2xl font-extrabold text-white w-full text-center mb-4">Dollar Dynamics</h1>
 
-          {/* Block for the rest of the navigation */}
+          
           <div className="flex flex-wrap justify-between items-center">
             <div className="flex gap-4">
               <div className="w-48">
@@ -191,7 +191,7 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Main content */}
+      
       <main className="flex-grow p-8 sm:p-16">
         {chartData ? (
           <div className="max-w-4xl mx-auto mt-8 p-8 bg-white rounded-lg shadow-md">
@@ -227,7 +227,7 @@ export default function Home() {
                 },
               }}
             />
-            {/* Legend Section */}
+            
             <div className="flex justify-center mt-4 text-black">
               <div className="flex items-center mr-4">
                 <div className="w-6 h-6 bg-red-500"></div>

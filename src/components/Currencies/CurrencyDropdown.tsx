@@ -1,6 +1,6 @@
 import React from "react";
 
-// Define the props type
+
 interface CurrencyDropdownProps {
   selectedCurrency: string;
   setSelectedCurrency: (currency: string) => void;

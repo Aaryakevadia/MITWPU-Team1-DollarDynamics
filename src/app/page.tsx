@@ -116,71 +116,76 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 via-purple-100 to-pink-100">
       {/* Navigation bar */}
       <nav className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 shadow-lg sticky top-0 z-10 p-6">
-        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center">
-          <h1 className="text-2xl font-extrabold text-white">Currency Exchange Dashboard</h1>
-          <div className="flex gap-4">
-            <div className="w-48">
-              <label className="block text-white text-sm mb-2">Currency 1</label>
-              <CurrencyDropdown selectedCurrency={currency1} setSelectedCurrency={setCurrency1} />
-            </div>
+  <div className="max-w-7xl mx-auto">
+    {/* Block for the title on its own line */}
+    <h1 className="text-2xl font-extrabold text-white w-full text-center mb-4">Dollar Dynamics</h1>
 
-            <div className="w-48">
-              <label className="block text-white text-sm mb-2">Currency 2</label>
-              <CurrencyDropdown selectedCurrency={currency2} setSelectedCurrency={setCurrency2} />
-            </div>
-
-            <div className="w-40">
-              <label className="block text-white text-sm mb-2">Date From</label>
-              <input
-                type="date"
-                value={dateFrom}
-                onChange={handleDateFromChange}
-                className="w-full px-4 py-2 border border-indigo-300 text-black rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-
-            <div className="w-40">
-              <label className="block text-white text-sm mb-2">Date To</label>
-              <input
-                type="date"
-                value={dateTo}
-                onChange={handleDateToChange}
-                className="w-full px-4 py-2 border border-indigo-300 text-black rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-
-            <div className="w-40">
-              <label className="block text-white text-sm mb-2">Time Range</label>
-              <select
-                value={timeRange}
-                onChange={handleTimeRangeChange}
-                className="w-full px-4 py-2 border border-indigo-300 rounded-lg text-black bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
-              >
-                <option value="">Select Time Range</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
-                <option value="quarterly">Quarterly</option>
-                <option value="yearly">Yearly</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="flex gap-4 mt-4">
-            <button
-              onClick={handleSeeGraph}
-              className="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-lg shadow-lg transition"
-            >
-              See Graph
-            </button>
-            <button
-              onClick={handleGoToCurrencyBasket}
-              className="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-lg transition"
-            >
-              Currency Basket
-            </button>
-          </div>
+    {/* Block for the rest of the navigation */}
+    <div className="flex flex-wrap justify-between items-center">
+      <div className="flex gap-4">
+        <div className="w-48">
+          <label className="block text-white text-sm mb-2">Currency 1</label>
+          <CurrencyDropdown selectedCurrency={currency1} setSelectedCurrency={setCurrency1} />
         </div>
-      </nav>
+
+        <div className="w-48">
+          <label className="block text-white text-sm mb-2">Currency 2</label>
+          <CurrencyDropdown selectedCurrency={currency2} setSelectedCurrency={setCurrency2} />
+        </div>
+
+        <div className="w-40">
+          <label className="block text-white text-sm mb-2">Date From</label>
+          <input
+            type="date"
+            value={dateFrom}
+            onChange={handleDateFromChange}
+            className="w-full px-4 py-2 border border-indigo-300 text-black rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+        </div>
+
+        <div className="w-40">
+          <label className="block text-white text-sm mb-2">Date To</label>
+          <input
+            type="date"
+            value={dateTo}
+            onChange={handleDateToChange}
+            className="w-full px-4 py-2 border border-indigo-300 text-black rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+        </div>
+
+        <div className="w-40">
+          <label className="block text-white text-sm mb-2">Time Range</label>
+          <select
+            value={timeRange}
+            onChange={handleTimeRangeChange}
+            className="w-full px-4 py-2 border border-indigo-300 rounded-lg text-black bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+          >
+            <option value="">Select Time Range</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="flex gap-4 mt-4">
+        <button
+          onClick={handleSeeGraph}
+          className="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded-lg shadow-lg transition"
+        >
+          See Graph
+        </button>
+        <button
+          onClick={handleGoToCurrencyBasket}
+          className="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-2 rounded-lg shadow-lg transition"
+        >
+          Currency Basket
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
 
       {/* Main content */}
       <main className="flex-grow p-8 sm:p-16">

@@ -25,18 +25,20 @@ export default function CurrencyBasket() {
   const [currencies, setCurrencies] = useState<Currency[]>([]);
   const [baseCurrency, setBaseCurrency] = useState("");
   const [allBaskets, setAllBaskets] = useState<BasketDetails[]>([]); // Store all baskets
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const router = useRouter(); // For redirection
 
   // Add the entered currency and weight to the currencies array
   const addCurrency = () => {
-    if (currency && weight) {
-      setCurrencies([...currencies, { currency, weight }]);
-      setCurrency("");
-      setWeight("");
-    } else {
-      alert("Please fill both fields before adding.");
+    if (!currency || !weight) {
+      setErrorMessage("Please fill both currency and weight fields.");
+      return;
     }
+    setErrorMessage(""); // Clear error message
+    setCurrencies([...currencies, { currency, weight }]);
+    setCurrency("");
+    setWeight("");
   };
 
   // Remove a currency and its weight from the array
@@ -46,6 +48,12 @@ export default function CurrencyBasket() {
 
   // Handle form submission to calculate the basket value
   const handleSubmit = async () => {
+    if (!basketName || currencies.length === 0 || !baseCurrency) {
+      setErrorMessage("Please fill all required fields: Basket Name, Added Currencies, and Base Currency.");
+      return;
+    }
+    setErrorMessage(""); // Clear error message
+
     try {
       const response = await axios.post("/api/currencyBasket", {
         basketName,
@@ -88,10 +96,13 @@ export default function CurrencyBasket() {
         {/* Left side - Input Form */}
         <div className="w-1/2 bg-white bg-opacity-90 p-8 shadow-lg rounded-md space-y-6">
           <h2 className="text-2xl font-semibold text-center text-gray-800">Create Basket</h2>
+          {errorMessage && <p className="text-red-500 text-center">{errorMessage}</p>} {/* Error Message */}
           <div className="flex flex-col items-center">
             {/* Basket Name Input */}
             <div className="w-full mb-4">
-              <label className="block text-gray-700 mb-2">Basket Name:</label>
+              <label className="block text-gray-700 mb-2">
+                Basket Name:<span className="text-red-500">*</span>
+              </label>
               <input
                 type="text"
                 value={basketName}
@@ -104,14 +115,18 @@ export default function CurrencyBasket() {
             {/* Currency and Weight Input */}
             <div className="flex gap-4 mb-4 w-full">
               <div className="flex-1">
-                <label className="block text-gray-700 mb-2">Currency:</label>
+                <label className="block text-gray-700 mb-2">
+                  Currency:<span className="text-red-500">*</span>
+                </label>
                 <CurrencyDropdown
                   selectedCurrency={currency}
                   setSelectedCurrency={setCurrency}
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-gray-700 mb-2">Weight (%):</label>
+                <label className="block text-gray-700 mb-2">
+                  Weight (%):<span className="text-red-500">*</span>
+                </label>
                 <input
                   type="number"
                   value={weight}
@@ -155,7 +170,9 @@ export default function CurrencyBasket() {
 
             {/* Base Currency Selection */}
             <div className="mt-6 w-full">
-              <label className="block text-gray-700 mb-2">Base Currency:</label>
+              <label className="block text-gray-700 mb-2">
+                Base Currency:<span className="text-red-500">*</span>
+              </label>
               <CurrencyDropdown
                 selectedCurrency={baseCurrency}
                 setSelectedCurrency={setBaseCurrency}
